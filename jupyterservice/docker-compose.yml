@@ -1,0 +1,35 @@
+### docker-compose.yml ###
+
+version: "3.7"
+
+services:
+  jupyter:
+    image: tristanbrown/jupyterenv
+    networks: 
+      - caddy
+    volumes:
+      - ${LOCAL_WORKING_DIR}:/home/jovyan/work
+      - ~/.ssh:/root/.ssh
+    ports:
+      - "8888"
+      - "8787"
+      - "8788"
+      - "8789"
+      - "5000"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ALPACA_KEYID=${ALPACA_KEYID}
+      - ALPACA_KEY=${ALPACA_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    command: "start-notebook.sh \
+      --NotebookApp.password=${ACCESS_TOKEN} \
+      --ContentsManager.allow_hidden=True"
+    labels:
+      caddy: localhost:8081, ${HOSTNAME}:8081
+      caddy.reverse_proxy: "{{upstreams 80}}"
+      caddy.tls: "internal"
+    restart: unless-stopped
+
+networks:
+  caddy:
+    external: true

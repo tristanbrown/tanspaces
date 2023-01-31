@@ -1,0 +1,89 @@
+### docker-compose.yml ###
+
+version: "3.7"
+
+services:
+  mongodb:
+    image: mongo:4.2
+    ports:
+      - "37017:27017"
+    volumes:
+      - mongodata:/data/db
+      - mongotemp:/tmp/mongodb
+    labels:
+      # First, safely backs up from data to temp using db-specific tool.
+      # Then temp is backed up externally.
+      - docker-volume-backup.exec-pre-backup=mongodump --archive=/tmp/mongodb/mongo.dump
+      - docker-volume-backup.exec-post-backup=rm -rfv /tmp/mongodb
+      # Restore backup by cp into mongodb container, $ mongorestore --archive=mongo.dump
+    restart: always
+  postgres:
+    image: postgres:12.3
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+      - postgrestemp:/tmp/postgres
+    labels:
+      # First, safely backs up from data to temp using db-specific tool.
+      # Then temp is backed up externally.
+      - docker-volume-backup.exec-pre-backup=pg_dumpall -U postgres -f /tmp/postgres/pg_backup.bak
+      - docker-volume-backup.exec-post-backup=rm -rfv /tmp/postgres
+      # Restore backup by cp into postgres container, $ psql -f pg_backup.bak postgres
+    restart: always
+  backup:
+    image: futurice/docker-volume-backup:2.1.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - mongotemp:/backup/mongodb:ro
+      - postgrestemp:/backup/postgres:ro
+      - ${BACKUP_DIR}:/archive
+    environment:
+      - BACKUP_CRON_EXPRESSION=${BACKUP_CRON_EXPRESSION}
+    restart: always
+  adminer:
+    image: adminer:4.7
+    ports:
+      - "18080:8080"
+    restart: always
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "25672:5672"
+      - "35672:15672"
+    restart: always
+  crontris:
+    image: tristanbrown/crontris:${CRONTRIS_TAG:-latest}
+    depends_on:
+      - rabbitmq
+      - mongodb
+    environment:
+      - COMPUTERNAME=${COMPUTERNAME}
+    restart: always
+  jupyter:
+    image: tristanbrown/jupyterenv
+    volumes:
+      - ${LOCAL_WORKING_DIR}:/home/jovyan/work
+      - ~/.ssh:/root/.ssh
+    ports:
+      - "18888:8888"
+      - "18787:8787"
+      - "18788:8788"
+      - "18789:8789"
+      - "15000:5000"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - ALPACA_KEYID=${ALPACA_KEYID}
+      - ALPACA_KEY=${ALPACA_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    command: "start-notebook.sh \
+      --NotebookApp.password=${ACCESS_TOKEN} \
+      --ContentsManager.allow_hidden=True"
+    restart: always
+volumes:
+  mongodata:
+  mongotemp:
+  postgresdata:
+  postgrestemp:
