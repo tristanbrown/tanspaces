@@ -1,6 +1,7 @@
 version: '3.7'
 services:
   caddy:
+    container_name: caddy_server
     image: lucaslorentz/caddy-docker-proxy:alpine
     ports:
       - 80:80
@@ -16,12 +17,14 @@ services:
     restart: unless-stopped
 
   whoami:
+    container_name: caddy_whoami
     image: containous/whoami
     networks:
       - caddy
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.reverse_proxy: "{{upstreams 80}}"
+      caddy.handle_path: /whoami/*
+      caddy.handle_path.0_reverse_proxy: "{{upstreams}}"
       caddy.tls: "internal"
 
 volumes:

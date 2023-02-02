@@ -1,32 +1,33 @@
 ### docker-compose.yml ###
+## Access the jupyterlab instance at:
+## https://${HOSTNAME}:8081/${PROJECTSLUG}/lab
 
 version: "3.7"
 
 services:
   jupyter:
+    container_name: ${PROJECTSLUG}
     image: tristanbrown/jupyterenv
     networks: 
       - caddy
     volumes:
       - ${LOCAL_WORKING_DIR}:/home/jovyan/work
       - ~/.ssh:/root/.ssh
-    ports:
-      - "8888"
-      - "8787"
-      - "8788"
-      - "8789"
-      - "5000"
+    expose:
+      - "8888"  ## Notebook/Lab server
+      - "5000"  ## Workspace-hosted Flask server
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - ALPACA_KEYID=${ALPACA_KEYID}
       - ALPACA_KEY=${ALPACA_KEY}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
     command: "start-notebook.sh \
+      --NotebookApp.base_url='/${PROJECTSLUG}/' \
       --NotebookApp.password=${ACCESS_TOKEN} \
       --ContentsManager.allow_hidden=True"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.reverse_proxy: "{{upstreams 80}}"
+      caddy.reverse_proxy: /${PROJECTSLUG}* "{{upstreams 8888}}"
       caddy.tls: "internal"
     restart: unless-stopped
 
