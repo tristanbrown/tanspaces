@@ -6,28 +6,26 @@ version: "3.7"
 
 services:
   jupyter:
-    container_name: ${PROJECTSLUG}
+    # container_name: ${PROJECTSLUG}
     image: tristanbrown/jupyterenv
     networks: 
       - caddy
     volumes:
-      - ${LOCAL_WORKING_DIR}:/home/jovyan/work
-      - ~/.ssh:/root/.ssh
+      - ~/.ssh:/home/jovyan/.ssh_host
+      - ${PROJECT_DIR}/_Notebooks/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
+      - ${PROJECT_DIR}/${COMPOSE_PROJECT_NAME}:/home/jovyan/${COMPOSE_PROJECT_NAME}
     expose:
       - "8888"  ## Notebook/Lab server
       - "5000"  ## Workspace-hosted Flask server
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - ALPACA_KEYID=${ALPACA_KEYID}
-      - ALPACA_KEY=${ALPACA_KEY}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-    command: "start-notebook.sh \
-      --NotebookApp.base_url='/${PROJECTSLUG}/' \
+    command: bash -c "eval `ssh-agent -s` && \
+      cat ~/.ssh_host/id_rsa | ssh-add -k - && \
+      start-notebook.sh \
+      --NotebookApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
       --NotebookApp.password=${ACCESS_TOKEN} \
       --ContentsManager.allow_hidden=True"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.reverse_proxy: /${PROJECTSLUG}* "{{upstreams 8888}}"
+      caddy.reverse_proxy: /${COMPOSE_PROJECT_NAME}* "{{upstreams 8888}}"
       caddy.tls: "internal"
     restart: unless-stopped
 
