@@ -7,18 +7,20 @@ version: "3.7"
 services:
   jupyter:
     # container_name: ${PROJECTSLUG}
-    image: tristanbrown/jupyterenv
+    image: tristanbrown/jupyterbase
     networks: 
       - caddy
     volumes:
-      - ~/.ssh:/home/jovyan/.ssh_host
+      - ~/.ssh:/mnt/host/.ssh
       - ${PROJECT_DIR}/_Notebooks/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
       - ${PROJECT_DIR}/${COMPOSE_PROJECT_NAME}:/home/jovyan/${COMPOSE_PROJECT_NAME}
     expose:
       - "8888"  ## Notebook/Lab server
       - "5000"  ## Workspace-hosted Flask server
-    command: bash -c "eval `ssh-agent -s` && \
-      cat ~/.ssh_host/id_rsa | ssh-add -k - && \
+    environment:
+      - HOST_SSH_MNT=/mnt/host/.ssh
+    command: bash -c "
+      . start-ssh.sh && \
       start-notebook.sh \
       --NotebookApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
       --NotebookApp.password=${ACCESS_TOKEN} \
