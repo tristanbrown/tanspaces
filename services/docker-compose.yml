@@ -17,7 +17,7 @@ services:
       - docker-volume-backup.exec-pre-backup=mongodump --archive=/tmp/mongodb/mongo.dump
       - docker-volume-backup.exec-post-backup=rm -rfv /tmp/mongodb
       # Restore backup by cp into mongodb container, $ mongorestore --archive=mongo.dump
-    restart: always
+    restart: unless-stopped
   postgres:
     container_name: postgres
     image: postgres:12.3
@@ -34,7 +34,7 @@ services:
       - docker-volume-backup.exec-pre-backup=pg_dumpall -U postgres -f /tmp/postgres/pg_backup.bak
       - docker-volume-backup.exec-post-backup=rm -rfv /tmp/postgres
       # Restore backup by cp into postgres container, $ psql -f pg_backup.bak postgres
-    restart: always
+    restart: unless-stopped
   backup:
     container_name: backup
     image: futurice/docker-volume-backup:2.1.0
@@ -45,20 +45,20 @@ services:
       - ${BACKUP_DIR}:/archive
     environment:
       - BACKUP_CRON_EXPRESSION=${BACKUP_CRON_EXPRESSION}
-    restart: always
+    restart: unless-stopped
   adminer:
     container_name: adminer
     image: adminer:4.7
     ports:
       - "18080:8080"
-    restart: always
+    restart: unless-stopped
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
     ports:
       - "25672:5672"
       - "35672:15672"
-    restart: always
+    restart: unless-stopped
   crontris:
     container_name: crontris
     image: tristanbrown/crontris:${CRONTRIS_TAG:-latest}
@@ -67,9 +67,13 @@ services:
       - mongodb
     environment:
       - COMPUTERNAME=${COMPUTERNAME}
-    restart: always
+    restart: unless-stopped
 volumes:
   mongodata:
   mongotemp:
   postgresdata:
   postgrestemp:
+
+networks:
+  caddy:
+    external: true
