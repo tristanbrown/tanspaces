@@ -22,7 +22,9 @@ services:
       - JUPYTERHUB_SERVICE_PREFIX=/${COMPOSE_PROJECT_NAME}/
     command: bash -c "
       . start-ssh.sh && \
-      pip install -e ~/${COMPOSE_PROJECT_NAME} && \
+      cd ~/${COMPOSE_PROJECT_NAME} && \
+      pip install -r requirements.txt && \
+      cd ~ && \
       start-notebook.sh \
       --NotebookApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
       --NotebookApp.password=${ACCESS_TOKEN} \
