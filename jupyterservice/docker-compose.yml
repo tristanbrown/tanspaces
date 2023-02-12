@@ -19,6 +19,7 @@ services:
       - "5000"  ## Workspace-hosted Flask server
     environment:
       - HOST_SSH_MNT=/mnt/host/.ssh
+      - JUPYTERHUB_SERVICE_PREFIX=/${COMPOSE_PROJECT_NAME}/
     command: bash -c "
       . start-ssh.sh && \
       pip install -e ~/${COMPOSE_PROJECT_NAME} && \
