@@ -6,6 +6,8 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo:4.2
+    networks:
+      - tanspaces
     ports:
       - "37017:27017"
     volumes:
@@ -21,6 +23,8 @@ services:
   postgres:
     container_name: postgres
     image: postgres:12.3
+    networks:
+      - tanspaces
     ports:
       - "15432:5432"
     environment:
@@ -38,6 +42,8 @@ services:
   backup:
     container_name: backup
     image: futurice/docker-volume-backup:2.1.0
+    networks:
+      - tanspaces
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - mongotemp:/backup/mongodb:ro
@@ -49,12 +55,16 @@ services:
   adminer:
     container_name: adminer
     image: adminer:4.7
+    networks:
+      - tanspaces
     ports:
       - "18080:8080"
     restart: unless-stopped
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management-alpine
+    networks:
+      - tanspaces
     ports:
       - "25672:5672"
       - "35672:15672"
@@ -62,6 +72,8 @@ services:
   crontris:
     container_name: crontris
     image: tristanbrown/crontris:${CRONTRIS_TAG:-latest}
+    networks:
+      - tanspaces
     depends_on:
       - rabbitmq
       - mongodb
@@ -75,5 +87,5 @@ volumes:
   postgrestemp:
 
 networks:
-  caddy:
+  tanspaces:
     external: true

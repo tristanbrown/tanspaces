@@ -9,7 +9,7 @@ services:
     # container_name: ${PROJECTSLUG}
     image: tristanbrown/jupyterbase
     networks: 
-      - caddy
+      - tanspaces
     volumes:
       - ~/.ssh:/mnt/host/.ssh
       - ${PROJECT_DIR}/_Notebooks/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
@@ -34,5 +34,5 @@ services:
     restart: unless-stopped
 
 networks:
-  caddy:
+  tanspaces:
     external: true
