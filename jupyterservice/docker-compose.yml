@@ -27,8 +27,8 @@ services:
       pip install -r requirements.txt && \
       cd ~ && \
       start-notebook.sh \
-      --NotebookApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
-      --NotebookApp.password=${ACCESS_TOKEN} \
+      --ServerApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
+      --ServerApp.password=${ACCESS_TOKEN} \
       --ContentsManager.allow_hidden=True"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
