@@ -12,6 +12,7 @@ services:
       - tanspaces
     volumes:
       - ~/.ssh:/mnt/host/.ssh
+      - "~/.gitconfig:/etc/gitconfig"
       - ${PROJECT_DIR}/_Notebooks/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
       - ${PROJECT_DIR}/${COMPOSE_PROJECT_NAME}:/home/jovyan/${COMPOSE_PROJECT_NAME}
     expose:
