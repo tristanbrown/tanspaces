@@ -16,16 +16,16 @@ services:
       - caddy_data:/data
     restart: unless-stopped
 
-  whoami:
-    container_name: caddy_whoami
-    image: containous/whoami
-    networks:
-      - tanspaces
-    labels:
-      caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.handle_path: /whoami/*
-      caddy.handle_path.0_reverse_proxy: "{{upstreams}}"
-      caddy.tls: "internal"
+  # whoami:
+  #   container_name: caddy_whoami
+  #   image: containous/whoami
+  #   networks:
+  #     - tanspaces
+  #   labels:
+  #     caddy: localhost:8081, ${HOSTNAME}:8081
+  #     caddy.handle_path: /whoami/*
+  #     caddy.handle_path.0_reverse_proxy: "{{upstreams}}"
+  #     caddy.tls: "internal"
 
 volumes:
   caddy_data: {}
