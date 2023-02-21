@@ -1,8 +1,14 @@
 {
     "@jupyterlab/apputils-extension:notification": {
-        "fetchNews": "false"
+        "fetchNews": false
     },
     "@jupyterlab/terminal-extension:plugin": {
         "theme": "dark"
+    },
+    "@jupyterlab/filebrowser-extension:browser": {
+        "showHiddenFiles": true
+    },
+    "@jupyterlab/docmanager-extension:plugin": {
+        "autosave": false
     }
 }

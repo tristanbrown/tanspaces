@@ -29,6 +29,7 @@ services:
       start-notebook.sh \
       --ServerApp.base_url='/tanspaces.${COMPOSE_PROJECT_NAME}/' \
       --ServerApp.password=${ACCESS_TOKEN} \
+      --ContentsManager.allow_hidden=True \
       --FileContentsManager.checkpoints_kwargs='root_dir'='/tmp/.ipynb_checkpoints'"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
