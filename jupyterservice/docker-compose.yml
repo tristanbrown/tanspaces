@@ -20,19 +20,19 @@ services:
       - "5000"  ## Workspace-hosted Flask server
     environment:
       - HOST_SSH_MNT=/mnt/host/.ssh
-      - JUPYTERHUB_SERVICE_PREFIX=/${COMPOSE_PROJECT_NAME}/
+      - JUPYTERHUB_SERVICE_PREFIX=/tanspaces.${COMPOSE_PROJECT_NAME}/
     command: bash -c "
       . start-ssh.sh && \
       cd ~/${COMPOSE_PROJECT_NAME} && \
       pip install -r requirements.txt && \
       cd ~ && \
       start-notebook.sh \
-      --ServerApp.base_url='/${COMPOSE_PROJECT_NAME}/' \
+      --ServerApp.base_url='/tanspaces.${COMPOSE_PROJECT_NAME}/' \
       --ServerApp.password=${ACCESS_TOKEN} \
       --ContentsManager.allow_hidden=True"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.reverse_proxy: /${COMPOSE_PROJECT_NAME}* "{{upstreams 8888}}"
+      caddy.reverse_proxy: /tanspaces.${COMPOSE_PROJECT_NAME}* "{{upstreams 8888}}"
       caddy.tls: "internal"
     restart: unless-stopped
 
