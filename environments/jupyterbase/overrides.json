@@ -4,5 +4,11 @@
     },
     "@jupyterlab/terminal-extension:plugin": {
         "theme": "dark"
+    },
+    "@jupyterlab/filebrowser-extension:browser": {
+        "showHiddenFiles": "true"
+    },
+    "@jupyterlab/docmanager-extension:plugin": {
+        "autosave": "false"
     }
 }
