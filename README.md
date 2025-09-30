@@ -13,7 +13,7 @@ Turnkey container stack for running Jupyter-based dev workspaces alongside share
 1. Create the external network once: `docker network create tanspaces` (safe to rerun).
 2. Start the proxy: `docker compose -f network/docker-compose.yml up -d`.
 3. Start shared services: `docker compose -f services/docker-compose.yml up -d`.
-4. For each project, export `PROJECT_DIR`, `COMPOSE_PROJECT_NAME`, `ACCESS_TOKEN`, `POSTGRES_PASSWORD`, and `JUPYTER_SERVICE=../tanspaces/jupyterservice/docker-compose.yml`, then run that project’s `docker compose up -d`.
+4. For each project, export (via a .env file): `PROJECT_DIR`, `COMPOSE_PROJECT_NAME`, `ACCESS_TOKEN`, `POSTGRES_PASSWORD`, and `JUPYTER_SERVICE=../tanspaces/jupyterservice/docker-compose.yml`, then run that project’s `docker compose up -d`.
 
 To resume after downtime, ensure the network exists and re-run any `docker compose up -d` commands you need; volumes keep database and backup state.
 
