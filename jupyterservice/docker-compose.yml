@@ -12,8 +12,9 @@ services:
     volumes:
       - ~/.ssh:/mnt/host/.ssh
       - "~/.gitconfig:/etc/gitconfig"
-      - ${PROJECT_DIR}/_Notebooks/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
-      - ${PROJECT_DIR}/${COMPOSE_PROJECT_NAME}:/home/jovyan/${COMPOSE_PROJECT_NAME}
+      - ${PROJECT_DIR}/Workspaces/Local/${COMPOSE_PROJECT_NAME}:/home/jovyan/work
+      - ${PROJECT_DIR}/Workspaces/Shared/${COMPOSE_PROJECT_NAME}:/home/jovyan/shared
+      - ${PROJECT_DIR}/Repos/${COMPOSE_PROJECT_NAME}:/home/jovyan/${COMPOSE_PROJECT_NAME}
     expose:
       - "8888"  ## Notebook/Lab server
       - "5000"  ## Workspace-hosted Flask server
