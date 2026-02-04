@@ -33,7 +33,8 @@ services:
       --FileContentsManager.checkpoints_kwargs='root_dir'='/tmp/.ipynb_checkpoints'"
     labels:
       caddy: localhost:8081, ${HOSTNAME}:8081
-      caddy.reverse_proxy: /tanspaces.${COMPOSE_PROJECT_NAME}* "{{upstreams 8888}}"
+      caddy.reverse_proxy_0: /tanspaces.${COMPOSE_PROJECT_NAME}* "{{upstreams 8888}}"
+      caddy.reverse_proxy_1: /${COMPOSE_PROJECT_NAME}* "{{upstreams 5000}}"
       caddy.tls: "internal"
     restart: unless-stopped
 
